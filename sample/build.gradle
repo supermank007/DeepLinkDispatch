@@ -1,0 +1,42 @@
+apply plugin: 'com.android.application'
+apply plugin: 'checkstyle'
+
+checkstyle {
+  configFile rootProject.file('checkstyle.xml')
+  showViolations true
+  configProperties = ['checkstyle.cache.file': rootProject.file('build/checkstyle.cache')]
+}
+
+android {
+  compileSdkVersion 25
+  buildToolsVersion "25.0.2"
+
+  defaultConfig {
+    applicationId "com.airbnb.deeplinkdispatch.sample"
+    minSdkVersion 16
+    targetSdkVersion 25
+    versionCode 1
+    versionName "1.0"
+  }
+  packagingOptions {
+    exclude 'META-INF/services/javax.annotation.processing.Processor'
+  }
+  lintOptions {
+    disable 'InvalidPackage'
+  }
+}
+
+dependencies {
+  compile project(':deeplinkdispatch')
+  annotationProcessor project(':deeplinkdispatch-processor')
+
+  compile project(':sample-library')
+  compile 'com.android.support:appcompat-v7:25.1.0'
+
+  testCompile 'org.robolectric:robolectric:3.2'
+  testCompile 'junit:junit:4.12'
+}
+
+tasks.withType(JavaCompile) {
+  options.compilerArgs << "-AdeepLinkDoc.output=${buildDir}/doc/deeplinks.txt"
+}
